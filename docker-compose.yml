@@ -12,9 +12,9 @@ services:
     image: caddy:latest
     container_name: actual-caddy
     command: ["caddy", "run", "--config", "/etc/caddyfile", "--adapter", "caddyfile"]
-  ports:
-  - "8080:80"
-  - "8443:443"
+    ports:
+      - "8080:80"
+      - "8443:443"
     volumes:
       - ./Caddyfile:/etc/caddyfile:ro
       - caddy_data:/data
