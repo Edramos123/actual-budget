@@ -17,9 +17,10 @@ services:
       - "18080:80"
       - "18443:443"
     volumes:
-      - ./Caddyfile:/etc/caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
+    # TEMP: don't mount caddyfile yet — we just want to see ports publish
+    # - ./Caddyfile:/etc/caddyfile:ro
 
 volumes:
   actual_data:
