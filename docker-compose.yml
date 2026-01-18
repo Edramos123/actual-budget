@@ -11,11 +11,12 @@ services:
   caddy:
     image: caddy:latest
     container_name: actual-caddy
+    command: ["caddy", "run", "--config", "/etc/caddyfile", "--adapter", "caddyfile"]
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./Caddyfile:/etc/caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
     restart: unless-stopped
