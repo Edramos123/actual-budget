@@ -1,0 +1,5 @@
+# nothing sensitive should be in repo, but just in case
+data/
+*.db
+.env
+.DS_Store
