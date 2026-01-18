@@ -4,25 +4,40 @@ services:
   actual:
     image: actualbudget/actual-server:latest
     container_name: actual-budget
+    restart: unless-stopped
     volumes:
       - actual_data:/data
-    restart: unless-stopped
 
   caddy:
     image: caddy:latest
     container_name: actual-caddy
     restart: unless-stopped
-    command: ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
     ports:
       - "18080:80"
       - "18443:443"
     volumes:
       - caddy_data:/data
       - caddy_config:/config
-      - caddy_caddyfile:/etc/caddy
+    # Generate the Caddyfile at container start (no bind mounts needed)
+    command: >
+      sh -c '
+      cat > /etc/caddy/Caddyfile << "EOF"
+      :443 {
+        reverse_proxy actual:5006
+
+        header {
+          Cross-Origin-Opener-Policy "same-origin"
+          Cross-Origin-Embedder-Policy "require-corp"
+          Cross-Origin-Resource-Policy "same-origin"
+        }
+
+        tls internal
+      }
+      EOF
+      caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+      '
 
 volumes:
   actual_data:
   caddy_data:
   caddy_config:
-  caddy_caddyfile:
