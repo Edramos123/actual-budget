@@ -18,24 +18,22 @@ services:
     volumes:
       - caddy_data:/data
       - caddy_config:/config
-    # Generate the Caddyfile at container start (no bind mounts needed)
-    command: >
-      sh -c '
-      cat > /etc/caddy/Caddyfile << "EOF"
-      :443 {
-        reverse_proxy actual:5006
-
-        header {
-          Cross-Origin-Opener-Policy "same-origin"
-          Cross-Origin-Embedder-Policy "require-corp"
-          Cross-Origin-Resource-Policy "same-origin"
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        cat > /etc/caddy/Caddyfile << 'EOF'
+        :443 {
+          reverse_proxy actual:5006
+          header {
+            Cross-Origin-Opener-Policy "same-origin"
+            Cross-Origin-Embedder-Policy "require-corp"
+            Cross-Origin-Resource-Policy "same-origin"
+          }
+          tls internal
         }
-
-        tls internal
-      }
-      EOF
-      caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
-      '
+        EOF
+        caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
 
 volumes:
   actual_data:
