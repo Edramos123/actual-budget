@@ -4,9 +4,9 @@ services:
   actual:
     image: actualbudget/actual-server:latest
     container_name: actual-budget
-    restart: unless-stopped
     volumes:
       - actual_data:/data
+    restart: unless-stopped
 
   caddy:
     image: caddy:latest
@@ -18,24 +18,10 @@ services:
     volumes:
       - caddy_data:/data
       - caddy_config:/config
-    entrypoint: /bin/sh
-    command:
-      - -c
-      - |
-        cat > /etc/caddy/Caddyfile << 'EOF'
-        :443 {
-          reverse_proxy actual:5006
-          header {
-            Cross-Origin-Opener-Policy "same-origin"
-            Cross-Origin-Embedder-Policy "require-corp"
-            Cross-Origin-Resource-Policy "same-origin"
-          }
-          tls internal
-        }
-        EOF
-        caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+      - caddy_etc:/etc/caddy
 
 volumes:
   actual_data:
   caddy_data:
   caddy_config:
+  caddy_etc:
